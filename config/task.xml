@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="testCronTypeTask" class="com.cwa.component.task.quartz.config.CronTypeConfig">
+		<property name="cornExpression" value="0/5 * * * * ?" />
+	</bean>
+
+	<bean id="testTaskWrap" class="com.cwa.component.task.quartz.TaskWrap">
+		<property name="task" ref="asyncOperatePool" />
+		<property name="taskType" ref="testCronTypeTask" />
+	</bean>
+
+	<bean id="taskWraps" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="testTaskWrap" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="quartzTaskManager" class="com.cwa.component.task.quartz.QuartzTaskManager"
+		init-method="startup">
+		<constructor-arg index="0" value="SystemJob" />
+		<constructor-arg index="1" value="SystemTrigger" />
+		<property name="taskWraps" ref="taskWraps" />
+	</bean>
+</beans>

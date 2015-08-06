@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.ProtoServiceConfig">
+	<resultMap id="protoServiceConfig" type="com.cwa.data.config.domain.ProtoServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="groupIds" property="groupIds" />
+		<result column="protoNames" property="protoNames" />
+		<result column="rids" property="rids" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="protoServiceConfig">
+		select * from `${table_number}_protoService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="protoServiceConfig">
+		select * from `${table_number}_protoService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="protoServiceConfig">
+		select * from `${table_number}_protoService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="protoServiceConfig">
+		select * from `${table_number}_protoService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_protoService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`protoNames`,`rids`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.groupIds},#{entity.protoNames},#{entity.rids})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_protoService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`groupIds`=#{entity.groupIds},`protoNames`=#{entity.protoNames},`rids`=#{entity.rids} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_protoService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_protoService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`protoNames`,`rids`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.groupIds},#{item.protoNames},#{item.rids})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_protoService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'protoService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_protoService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`groupIds` varchar(100) DEFAULT '',
+			`protoNames` varchar(2550) DEFAULT '',
+			`rids` varchar(255) DEFAULT '',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_protoService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `groupIds`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.groupIds} 
+       	</foreach>
+        end,
+		 `protoNames`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.protoNames} 
+       	</foreach>
+        end,
+		 `rids`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.rids} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

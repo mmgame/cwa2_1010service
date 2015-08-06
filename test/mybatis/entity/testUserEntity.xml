@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.entity.domain.TestUserEntity">
+	<resultMap id="testUserEntity" type="com.cwa.entity.domain.TestUserEntity">
+		<result column="userId" property="userId" />
+		<result column="level" property="level" />
+		<result column="name" property="name" />
+		<result column="exp" property="exp" />
+	</resultMap>
+	
+	<select id="selectByUserId" resultMap="testUserEntity">
+		select * from `testUser_${table_number}` where (`userId`=#{userId})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="testUserEntity">
+		select * from `testUser_${table_number}`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `testUser_${table_number}` (`userId`,`level`,`name`,`exp`) values (#{entity.userId},#{entity.level},#{entity.name},#{entity.exp})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `testUser_${table_number}` set `userId`=#{entity.userId},`level`=#{entity.level},`name`=#{entity.name},`exp`=#{entity.exp} where (`userId`=#{entity.userId})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `testUser_${table_number}` where (`userId`=#{entity.userId})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `testUser_${table_number}` (`userId`,`level`,`name`,`exp`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.userId},#{item.level},#{item.name},#{item.exp})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `testUser_${table_number}` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`userId`=#{item.userId})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" >
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #tablename# and TABLE_NAME like 'testUser\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `testUser_${table_number}` (
+			`userId` bigint(20) DEFAULT '0',
+			`level` int(11) DEFAULT '0',
+			`name` varchar(50) DEFAULT '',
+			`exp` int(11) DEFAULT '0',
+		PRIMARY KEY (`userId`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `testUser_${table_number}` set 
+		 `userId`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`userId`=#{item.userId}) then #{item.userId} 
+       	</foreach>
+        end,
+		 `level`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`userId`=#{item.userId}) then #{item.level} 
+       	</foreach>
+        end,
+		 `name`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`userId`=#{item.userId}) then #{item.name} 
+       	</foreach>
+        end,
+		 `exp`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`userId`=#{item.userId}) then #{item.exp} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`userId`=#{item.userId})
+       	</foreach>
+	</update>
+</mapper>

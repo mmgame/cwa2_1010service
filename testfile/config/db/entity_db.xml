@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+	<!-- 配置数据库 <bean id="entity.propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+		<property name="locations"> <list> <value>classpath:config/jdbc_entity1.properties</value> 
+		<value>classpath:config/jdbc_entity2.properties</value> </list> </property> 
+		</bean> -->
+
+	<!-- 配置数据源 -->
+	<bean id="entity1.partition" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${entity1.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${entity1.jdbc.url}" />
+		<property name="user" value="${entity1.jdbc.user}" />
+		<property name="password" value="${entity1.jdbc.password}" />
+		<property name="minPoolSize" value="${entity1.minPoolSize}" />
+		<property name="initialPoolSize" value="${entity1.initialPoolSize}" />
+		<property name="maxPoolSize" value="${entity1.maxPoolSize}" />
+		<property name="acquireIncrement" value="${entity1.acquireIncrement}" />
+		<property name="maxStatementsPerConnection" value="${entity1.maxStatementsPerConnection}" />
+		<property name="maxStatements" value="${entity1.maxStatements}" />
+	</bean>
+
+	<bean id="entity2.partition" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${entity2.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${entity2.jdbc.url}" />
+		<property name="user" value="${entity2.jdbc.user}" />
+		<property name="password" value="${entity2.jdbc.password}" />
+		<property name="minPoolSize" value="${entity2.minPoolSize}" />
+		<property name="initialPoolSize" value="${entity2.initialPoolSize}" />
+		<property name="maxPoolSize" value="${entity2.maxPoolSize}" />
+		<property name="acquireIncrement" value="${entity2.acquireIncrement}" />
+		<property name="maxStatementsPerConnection" value="${entity2.maxStatementsPerConnection}" />
+		<property name="maxStatements" value="${entity2.maxStatements}" />
+	</bean>
+
+	<!-- DefaultCobarDataSourceService 实现了 ICobarDataSourceService接口；封装了多个数据源 -->
+	<bean id="entity.dataSources"
+		class="com.alibaba.cobar.client.datasources.DefaultCobarDataSourceService">
+		<property name="dataSourceDescriptors">
+			<set>
+				<bean
+					class="com.alibaba.cobar.client.datasources.CobarDataSourceDescriptor">
+					<!-- 数据分区的唯一标志 -->
+					<property name="identity" value="entity.partition1" />
+
+					<!-- 主要目标数据源的依赖引用 -->
+					<property name="targetDataSource" ref="entity1.partition" />
+
+					<!-- 主要目标数据源伴随的ha探测用数据源 -->
+					<property name="targetDetectorDataSource" ref="entity1.partition" />
+
+					<!-- 这里为备用数据源，这里可以不配置，或配置相同的数据源 -->
+					<!-- <property name="standbyDataSource" ref="entity.partition1_standby" 
+						/> <property name="standbyDetectorDataSource" ref="entity.partition1_standby" 
+						/> -->
+
+					<!-- CPU内核的数量乘以5作为默认大小 -->
+					<property name="poolSize" value="10" />
+				</bean>
+				<bean
+					class="com.alibaba.cobar.client.datasources.CobarDataSourceDescriptor">
+					<property name="identity" value="entity.partition2" />
+					<property name="targetDataSource" ref="entity2.partition" />
+					<property name="targetDetectorDataSource" ref="entity2.partition" />
+					<!-- 这里为备用数据库 -->
+					<!-- <property name="standbyDataSource" ref="entity.partition2_standby" 
+						/> <property name="standbyDetectorDataSource" ref="entity.partition2_standby" 
+						/> -->
+				</bean>
+			</set>
+		</property>
+		<!-- 如果haDataSourceCreator没有配置standbyDataSource，standbyDetectorDataSource和targetDetectorDataSource可以不用配置，默认使用 
+			NonHADataSourceCreate。默认使用FailoverHotSwapDataSourceCreator。FailoverHotSwapDataSourceCreator分为主动探测和被动探测。默认主动探测 
+			并配置相应的探测用sql表。如cobarha表。可以自定义探测sql。可以设置时间间隔，超时，重试次数。 -->
+		<!-- <property name="haDataSourceCreator"> <bean class="com.alibaba.cobar.client.datasources.ha.FailoverHotSwapDataSourceCreator"> 
+			<property name="detectingSql" value="update cobarha set timeflag=CURRENT_TIMESTAMP()"/> 
+			</bean> </property> -->
+	</bean>
+	<!--动态加载jdbc数据文件 -->
+	<!-- <bean id="jdbcSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> 
+		<property name="basenames"> <list> <value>classpath:cofing/db/jdbc</value> 
+		</list> </property> </bean> -->
+
+	<bean id="ibatisConfigResource" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg index="0" value="config/ibatis/sqlmap-config.xml" />
+	</bean>
+	
+	<!-- 为ibatis的sqlMapClient -->
+	<bean id="entity.sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="dataSource" ref="entity1.partition" />
+		<property name="configLocation" ref="ibatisConfigResource" />
+	</bean>
+
+	<!-- CobarSqlMapClientTemplate 依赖 ICobarDataSourceService ，依赖ICobarRouter实现类 -->
+	<bean id="entity.sqlMapClientTemplate" class="com.alibaba.cobar.client.CobarSqlMapClientTemplate">
+		<property name="sqlMapClient" ref="entity.sqlMapClient" />
+		<property name="cobarDataSourceService" ref="entity.dataSources" />
+		<property name="router" ref="entity.internalRouter" />
+		<!--<property name="sqlAuditor"> <bean class="com.alibaba.cobar.client.audit.SimpleSqlAuditor" 
+			/> </property> -->
+
+		<!-- 监控的sql运行时间的限定标准 -->
+		<property name="profileLongTimeRunningSql" value="true" />
+		<property name="longTimeRunningSqlIntervalThreshold" value="3600000" />
+
+		<property name="mergers">
+			<map>
+				<entry
+					key="com.alibaba.cobar.client.entities.Offer.findAllWithOrderByOnSubject"
+					value-ref="entity.merger" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- 这里可以自定义比较器 -->
+	<bean id="entity.comparator" class="com.alibaba.cobar.client.support.OfferComparator">
+	</bean>
+
+	<bean id="entity.merger" class="com.alibaba.cobar.client.merger.ConcurrentSortMerger">
+		<property name="comparator" ref="entity.comparator">
+		</property>
+	</bean>
+
+	<!-- 常见水平切分有范围，模数，哈希 -->
+	<!-- 提供ICobarRouter实现，读取具体的路由规则文件。 DefaultCobarClientInternalRouter配置由DefaultCobarClientInternalRouterXmlFactoryBean或staticCobarClientInternalRouterFactoryBean 
+		两种工厂创建。 -->
+
+	<!-- 可以自己定义规则函数， 如Hashing -->
+	<bean id="entity.internalRouter"
+		class="com.alibaba.cobar.client.router.config.DefaultCobarClientInternalRouterXmlFactoryBean">
+		<property name="functionsMap">
+			<map>
+				<entry key="mod">
+					<bean class="com.alibaba.cobar.client.router.rules.support.ModFunction">
+						<constructor-arg>
+							<value>2</value>
+						</constructor-arg>
+					</bean>
+				</entry>
+			</map>
+		</property>
+
+		<property name="configLocations">
+			<list>
+<!-- 				<value>classpath:config/routing/accountbindEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/achievementEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/activityExteriorEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/activityInteriorEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/activityLimitEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/assignmentDailyEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/assignmentDailyRewardEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/assignmentMainEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/blackListEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/cumulativebonusEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/dailybonusEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/elitebattleEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/equipmentBuffEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/equipmentEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/equipmentRepairEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/equipmentTrainEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/fightformationEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/fightgrooveEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/friendapplyEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/friendEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/gamecdEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/heroEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/heroTrainEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/itemEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/ladderEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/ladderMatchEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/ladderWinnersEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/mailEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/matchEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/messageEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/rouletteEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/skillEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/structureEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/technologyEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/userattrEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/userBuffEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/userBoughtRecordEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/usereconomyEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/userEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/userinfoEntity-rules.xml</value> -->
+<!-- 				<value>classpath:config/routing/vipEntity-rules.xml</value> -->
+			</list>
+		</property>
+	</bean>
+	<!-- <bean id="internalRouter_Legacy" class="com.alibaba.cobar.client.router.config.CobarInteralRouterXmlFactoryBean"> 
+		<property name="functionsMap"> <map> <entry key="mod"> <bean class="com.alibaba.cobar.client.router.rules.support.ModFunction"> 
+		<constructor-arg><value>2</value></constructor-arg> </bean> </entry> </map> 
+		</property> <property name="configLocation" value="classpath:config/db/routing/routing-rules.xml" 
+		/> </bean> -->
+
+	<!-- 这里是干嘛用的？？？ <bean id="internalRouterMerger" class="com.alibaba.cobar.client.router.config.StaticCobarClientInternalRouterFactoryBean"> 
+		<property name="functionsMap"> <map> <entry key="mod"> <bean class="com.alibaba.cobar.client.router.rules.support.ModFunction"> 
+		<constructor-arg> <value>128</value> </constructor-arg> </bean> </entry> 
+		</map> </property> <property name="rules"> <list> <bean class="com.alibaba.cobar.client.router.config.vo.InternalRule"> 
+		<property name="namespace" value="com.alibaba.cobar.client.entities.Offer" 
+		/> <property name="shardingExpression" value="mod.apply(memberId)==1" /> 
+		<property name="shards" value="partition1" /> </bean> <bean class="com.alibaba.cobar.client.router.config.vo.InternalRule"> 
+		<property name="namespace" value="com.alibaba.cobar.client.entities.Offer" 
+		/> <property name="shardingExpression" value="mod.apply(memberId)==2" /> 
+		<property name="shards" value="partition2" /> </bean> <bean class="com.alibaba.cobar.client.router.config.vo.InternalRule"> 
+		<property name="sqlmap" value="com.alibaba.cobar.client.entities.Offer.findAllWithOrderByOnSubject" 
+		/> <property name="shards" value="partition1, partition2" /> </bean> </list> 
+		</property> </bean> -->
+	<!-- 配置数据库事务 -->
+	<!-- MultipleDataSourcesTransactionManager 依赖 ICobarDataSourceService的实现 -->
+	<bean id="transactionManager"
+		class="com.alibaba.cobar.client.transaction.MultipleDataSourcesTransactionManager">
+		<property name="cobarDataSourceService" ref="entity.dataSources" />
+		<!--  <property name="globalRollbackOnParticipationFailure" value="true" />  -->
+	</bean>
+
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+
+	<!-- 声明式事务   -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false" rollback-for="Throwable"/>
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false" rollback-for="Throwable"/>
+			<tx:method name="update*" propagation="REQUIRED" read-only="false" rollback-for="Throwable"/>
+			<tx:method name="executeSync" propagation="REQUIRED" read-only="false" rollback-for="Throwable"/>
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+</beans>

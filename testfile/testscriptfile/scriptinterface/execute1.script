@@ -1,0 +1,25 @@
+importPackage(java.lang); 
+importPackage(java.util);
+importPackage(Packages.test);
+
+var counter=0;
+
+function execute(role,item){
+counter=counter+1;
+
+role.hp+=1;
+role.mp=11;
+
+role.maxHp=111;
+role.maxMp=1111;
+
+println("counter="+counter);
+/** return createResult(); */
+};
+
+function createResult(){
+	var result = new TestScriptResult();
+	
+	
+	return result;
+};

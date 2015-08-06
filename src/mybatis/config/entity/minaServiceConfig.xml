@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.MinaServiceConfig">
+	<resultMap id="minaServiceConfig" type="com.cwa.data.config.domain.MinaServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="listening" property="listening" />
+		<result column="heartbeatId" property="heartbeatId" />
+		<result column="forwardEvent" property="forwardEvent" />
+		<result column="ideltimeout" property="ideltimeout" />
+		<result column="heartbeatrate" property="heartbeatrate" />
+		<result column="messagemaxpackage" property="messagemaxpackage" />
+		<result column="connectTimeout" property="connectTimeout" />
+		<result column="minpool" property="minpool" />
+		<result column="maxpool" property="maxpool" />
+		<result column="allowedInterval" property="allowedInterval" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="minaServiceConfig">
+		select * from `${table_number}_minaService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="minaServiceConfig">
+		select * from `${table_number}_minaService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="minaServiceConfig">
+		select * from `${table_number}_minaService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="minaServiceConfig">
+		select * from `${table_number}_minaService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_minaService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`listening`,`heartbeatId`,`forwardEvent`,`ideltimeout`,`heartbeatrate`,`messagemaxpackage`,`connectTimeout`,`minpool`,`maxpool`,`allowedInterval`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.listening},#{entity.heartbeatId},#{entity.forwardEvent},#{entity.ideltimeout},#{entity.heartbeatrate},#{entity.messagemaxpackage},#{entity.connectTimeout},#{entity.minpool},#{entity.maxpool},#{entity.allowedInterval})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_minaService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`listening`=#{entity.listening},`heartbeatId`=#{entity.heartbeatId},`forwardEvent`=#{entity.forwardEvent},`ideltimeout`=#{entity.ideltimeout},`heartbeatrate`=#{entity.heartbeatrate},`messagemaxpackage`=#{entity.messagemaxpackage},`connectTimeout`=#{entity.connectTimeout},`minpool`=#{entity.minpool},`maxpool`=#{entity.maxpool},`allowedInterval`=#{entity.allowedInterval} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_minaService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_minaService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`listening`,`heartbeatId`,`forwardEvent`,`ideltimeout`,`heartbeatrate`,`messagemaxpackage`,`connectTimeout`,`minpool`,`maxpool`,`allowedInterval`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.listening},#{item.heartbeatId},#{item.forwardEvent},#{item.ideltimeout},#{item.heartbeatrate},#{item.messagemaxpackage},#{item.connectTimeout},#{item.minpool},#{item.maxpool},#{item.allowedInterval})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_minaService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'minaService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_minaService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`listening` int(11) DEFAULT '0',
+			`heartbeatId` int(11) DEFAULT '0',
+			`forwardEvent` int(11) DEFAULT '0',
+			`ideltimeout` int(11) DEFAULT '0',
+			`heartbeatrate` int(11) DEFAULT '0',
+			`messagemaxpackage` int(11) DEFAULT '0',
+			`connectTimeout` int(11) DEFAULT '0',
+			`minpool` int(11) DEFAULT '0',
+			`maxpool` int(11) DEFAULT '0',
+			`allowedInterval` int(11) DEFAULT '0',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_minaService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `listening`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.listening} 
+       	</foreach>
+        end,
+		 `heartbeatId`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.heartbeatId} 
+       	</foreach>
+        end,
+		 `forwardEvent`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.forwardEvent} 
+       	</foreach>
+        end,
+		 `ideltimeout`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ideltimeout} 
+       	</foreach>
+        end,
+		 `heartbeatrate`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.heartbeatrate} 
+       	</foreach>
+        end,
+		 `messagemaxpackage`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.messagemaxpackage} 
+       	</foreach>
+        end,
+		 `connectTimeout`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.connectTimeout} 
+       	</foreach>
+        end,
+		 `minpool`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.minpool} 
+       	</foreach>
+        end,
+		 `maxpool`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.maxpool} 
+       	</foreach>
+        end,
+		 `allowedInterval`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.allowedInterval} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

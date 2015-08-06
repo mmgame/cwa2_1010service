@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.FunctionZKInfoConfig">
+	<resultMap id="functionZKInfoConfig" type="com.cwa.data.config.domain.FunctionZKInfoConfig">
+		<result column="gid" property="gid" />
+		<result column="hosts" property="hosts" />
+		<result column="sessionTimeout" property="sessionTimeout" />
+		<result column="rootPath" property="rootPath" />
+	</resultMap>
+	
+	<select id="selectByGid" resultMap="functionZKInfoConfig">
+		select * from `${table_number}_functionZKInfo` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="functionZKInfoConfig">
+		select * from `${table_number}_functionZKInfo`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_functionZKInfo` (`gid`,`hosts`,`sessionTimeout`,`rootPath`) values (#{entity.gid},#{entity.hosts},#{entity.sessionTimeout},#{entity.rootPath})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_functionZKInfo` set `gid`=#{entity.gid},`hosts`=#{entity.hosts},`sessionTimeout`=#{entity.sessionTimeout},`rootPath`=#{entity.rootPath} where (`gid`=#{entity.gid})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_functionZKInfo` where (`gid`=#{entity.gid})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_functionZKInfo` (`gid`,`hosts`,`sessionTimeout`,`rootPath`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.hosts},#{item.sessionTimeout},#{item.rootPath})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_functionZKInfo` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'functionZKInfo\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_functionZKInfo` (
+			`gid` int(11) DEFAULT '0',
+			`hosts` varchar(100) DEFAULT '',
+			`sessionTimeout` int(11) DEFAULT '0',
+			`rootPath` varchar(30) DEFAULT '',
+		PRIMARY KEY (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_functionZKInfo` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `hosts`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid}) then #{item.hosts} 
+       	</foreach>
+        end,
+		 `sessionTimeout`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid}) then #{item.sessionTimeout} 
+       	</foreach>
+        end,
+		 `rootPath`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid}) then #{item.rootPath} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid})
+       	</foreach>
+	</update>
+</mapper>

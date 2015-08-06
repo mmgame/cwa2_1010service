@@ -1,0 +1,2 @@
+propertiesconfig/log4j.xml 
+propertiesconfig/jdbc_entity.properties

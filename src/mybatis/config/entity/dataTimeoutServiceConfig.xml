@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.DataTimeoutServiceConfig">
+	<resultMap id="dataTimeoutServiceConfig" type="com.cwa.data.config.domain.DataTimeoutServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="timeout" property="timeout" />
+		<result column="expression" property="expression" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="dataTimeoutServiceConfig">
+		select * from `${table_number}_dataTimeoutService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="dataTimeoutServiceConfig">
+		select * from `${table_number}_dataTimeoutService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="dataTimeoutServiceConfig">
+		select * from `${table_number}_dataTimeoutService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="dataTimeoutServiceConfig">
+		select * from `${table_number}_dataTimeoutService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_dataTimeoutService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`timeout`,`expression`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.timeout},#{entity.expression})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_dataTimeoutService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`timeout`=#{entity.timeout},`expression`=#{entity.expression} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_dataTimeoutService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_dataTimeoutService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`timeout`,`expression`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.timeout},#{item.expression})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_dataTimeoutService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'dataTimeoutService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_dataTimeoutService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`timeout` int(11) DEFAULT '0',
+			`expression` varchar(30) DEFAULT '',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_dataTimeoutService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `timeout`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.timeout} 
+       	</foreach>
+        end,
+		 `expression`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.expression} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.DatabaseInfoConfig">
+	<resultMap id="databaseInfoConfig" type="com.cwa.data.config.domain.DatabaseInfoConfig">
+		<result column="gid" property="gid" />
+		<result column="dbid" property="dbid" />
+		<result column="ip" property="ip" />
+		<result column="port" property="port" />
+		<result column="dbName" property="dbName" />
+		<result column="user" property="user" />
+		<result column="password" property="password" />
+		<result column="regionMap" property="regionMap" />
+		<result column="mybatis" property="mybatis" />
+	</resultMap>
+	
+	<select id="selectByGidAndDbid" resultMap="databaseInfoConfig">
+		select * from `${table_number}_databaseInfo` where (`gid`=#{gid} and `dbid`=#{dbid})
+	</select>
+	<select id="selectByGid" resultMap="databaseInfoConfig">
+		select * from `${table_number}_databaseInfo` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="databaseInfoConfig">
+		select * from `${table_number}_databaseInfo`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_databaseInfo` (`gid`,`dbid`,`ip`,`port`,`dbName`,`user`,`password`,`regionMap`,`mybatis`) values (#{entity.gid},#{entity.dbid},#{entity.ip},#{entity.port},#{entity.dbName},#{entity.user},#{entity.password},#{entity.regionMap},#{entity.mybatis})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_databaseInfo` set `gid`=#{entity.gid},`dbid`=#{entity.dbid},`ip`=#{entity.ip},`port`=#{entity.port},`dbName`=#{entity.dbName},`user`=#{entity.user},`password`=#{entity.password},`regionMap`=#{entity.regionMap},`mybatis`=#{entity.mybatis} where (`gid`=#{entity.gid} and `dbid`=#{entity.dbid})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_databaseInfo` where (`gid`=#{entity.gid} and `dbid`=#{entity.dbid})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_databaseInfo` (`gid`,`dbid`,`ip`,`port`,`dbName`,`user`,`password`,`regionMap`,`mybatis`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.dbid},#{item.ip},#{item.port},#{item.dbName},#{item.user},#{item.password},#{item.regionMap},#{item.mybatis})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_databaseInfo` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `dbid`=#{item.dbid})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'databaseInfo\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_databaseInfo` (
+			`gid` int(11) DEFAULT '0',
+			`dbid` int(11) DEFAULT '0',
+			`ip` varchar(255) DEFAULT '',
+			`port` int(11) DEFAULT '0',
+			`dbName` varchar(255) DEFAULT '',
+			`user` varchar(255) DEFAULT '',
+			`password` varchar(255) DEFAULT '',
+			`regionMap` varchar(255) DEFAULT '',
+			`mybatis` varchar(255) DEFAULT '',
+		PRIMARY KEY (`gid`,`dbid`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_databaseInfo` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `dbid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.dbid} 
+       	</foreach>
+        end,
+		 `ip`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.ip} 
+       	</foreach>
+        end,
+		 `port`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.port} 
+       	</foreach>
+        end,
+		 `dbName`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.dbName} 
+       	</foreach>
+        end,
+		 `user`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.user} 
+       	</foreach>
+        end,
+		 `password`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.password} 
+       	</foreach>
+        end,
+		 `regionMap`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.regionMap} 
+       	</foreach>
+        end,
+		 `mybatis`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `dbid`=#{item.dbid}) then #{item.mybatis} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `dbid`=#{item.dbid})
+       	</foreach>
+	</update>
+</mapper>

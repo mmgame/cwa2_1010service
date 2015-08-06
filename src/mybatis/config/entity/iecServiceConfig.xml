@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.IecServiceConfig">
+	<resultMap id="iecServiceConfig" type="com.cwa.data.config.domain.IecServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="groupIds" property="groupIds" />
+		<result column="port" property="port" />
+		<result column="protocol" property="protocol" />
+		<result column="adapterName" property="adapterName" />
+		<result column="packageNames" property="packageNames" />
+		<result column="interfcNames" property="interfcNames" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="iecServiceConfig">
+		select * from `${table_number}_iecService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="iecServiceConfig">
+		select * from `${table_number}_iecService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="iecServiceConfig">
+		select * from `${table_number}_iecService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="iecServiceConfig">
+		select * from `${table_number}_iecService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_iecService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`port`,`protocol`,`adapterName`,`packageNames`,`interfcNames`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.groupIds},#{entity.port},#{entity.protocol},#{entity.adapterName},#{entity.packageNames},#{entity.interfcNames})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_iecService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`groupIds`=#{entity.groupIds},`port`=#{entity.port},`protocol`=#{entity.protocol},`adapterName`=#{entity.adapterName},`packageNames`=#{entity.packageNames},`interfcNames`=#{entity.interfcNames} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_iecService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_iecService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`port`,`protocol`,`adapterName`,`packageNames`,`interfcNames`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.groupIds},#{item.port},#{item.protocol},#{item.adapterName},#{item.packageNames},#{item.interfcNames})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_iecService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'iecService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_iecService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`groupIds` varchar(100) DEFAULT '',
+			`port` int(11) DEFAULT '0',
+			`protocol` varchar(30) DEFAULT '',
+			`adapterName` varchar(30) DEFAULT '',
+			`packageNames` varchar(100) DEFAULT '',
+			`interfcNames` varchar(100) DEFAULT '',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_iecService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `groupIds`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.groupIds} 
+       	</foreach>
+        end,
+		 `port`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.port} 
+       	</foreach>
+        end,
+		 `protocol`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.protocol} 
+       	</foreach>
+        end,
+		 `adapterName`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.adapterName} 
+       	</foreach>
+        end,
+		 `packageNames`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.packageNames} 
+       	</foreach>
+        end,
+		 `interfcNames`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.interfcNames} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

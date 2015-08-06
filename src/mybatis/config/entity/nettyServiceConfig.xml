@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.NettyServiceConfig">
+	<resultMap id="nettyServiceConfig" type="com.cwa.data.config.domain.NettyServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="listening" property="listening" />
+		<result column="readerIdleTime" property="readerIdleTime" />
+		<result column="writerIdleTime" property="writerIdleTime" />
+		<result column="allIdleTime" property="allIdleTime" />
+		<result column="subReactorThreadNum" property="subReactorThreadNum" />
+		<result column="handlerThreadNum" property="handlerThreadNum" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="nettyServiceConfig">
+		select * from `${table_number}_nettyService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="nettyServiceConfig">
+		select * from `${table_number}_nettyService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="nettyServiceConfig">
+		select * from `${table_number}_nettyService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="nettyServiceConfig">
+		select * from `${table_number}_nettyService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_nettyService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`listening`,`readerIdleTime`,`writerIdleTime`,`allIdleTime`,`subReactorThreadNum`,`handlerThreadNum`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.listening},#{entity.readerIdleTime},#{entity.writerIdleTime},#{entity.allIdleTime},#{entity.subReactorThreadNum},#{entity.handlerThreadNum})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_nettyService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`listening`=#{entity.listening},`readerIdleTime`=#{entity.readerIdleTime},`writerIdleTime`=#{entity.writerIdleTime},`allIdleTime`=#{entity.allIdleTime},`subReactorThreadNum`=#{entity.subReactorThreadNum},`handlerThreadNum`=#{entity.handlerThreadNum} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_nettyService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_nettyService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`listening`,`readerIdleTime`,`writerIdleTime`,`allIdleTime`,`subReactorThreadNum`,`handlerThreadNum`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.listening},#{item.readerIdleTime},#{item.writerIdleTime},#{item.allIdleTime},#{item.subReactorThreadNum},#{item.handlerThreadNum})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_nettyService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'nettyService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_nettyService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`listening` int(11) DEFAULT '0',
+			`readerIdleTime` int(11) DEFAULT '0',
+			`writerIdleTime` int(11) DEFAULT '0',
+			`allIdleTime` int(11) DEFAULT '0',
+			`subReactorThreadNum` int(11) DEFAULT '0',
+			`handlerThreadNum` int(11) DEFAULT '0',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_nettyService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `listening`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.listening} 
+       	</foreach>
+        end,
+		 `readerIdleTime`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.readerIdleTime} 
+       	</foreach>
+        end,
+		 `writerIdleTime`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.writerIdleTime} 
+       	</foreach>
+        end,
+		 `allIdleTime`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.allIdleTime} 
+       	</foreach>
+        end,
+		 `subReactorThreadNum`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.subReactorThreadNum} 
+       	</foreach>
+        end,
+		 `handlerThreadNum`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.handlerThreadNum} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

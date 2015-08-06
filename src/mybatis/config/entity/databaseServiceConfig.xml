@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cwa.data.config.domain.DatabaseServiceConfig">
+	<resultMap id="databaseServiceConfig" type="com.cwa.data.config.domain.DatabaseServiceConfig">
+		<result column="gid" property="gid" />
+		<result column="ftype" property="ftype" />
+		<result column="key" property="key" />
+		<result column="version" property="version" />
+		<result column="available" property="available" />
+		<result column="initPriority" property="initPriority" />
+		<result column="groupIds" property="groupIds" />
+		<result column="driverClass" property="driverClass" />
+		<result column="minPool" property="minPool" />
+		<result column="initialPool" property="initialPool" />
+		<result column="maxPool" property="maxPool" />
+		<result column="acquireIncrement" property="acquireIncrement" />
+		<result column="maxStatements" property="maxStatements" />
+		<result column="maxStatementsPerConnection" property="maxStatementsPerConnection" />
+		<result column="maxIdleTime" property="maxIdleTime" />
+		<result column="checkoutTimeout" property="checkoutTimeout" />
+	</resultMap>
+	
+	<select id="selectByGidAndFtypeAndKey" resultMap="databaseServiceConfig">
+		select * from `${table_number}_databaseService` where (`gid`=#{gid} and `ftype`=#{ftype} and `key`=#{key})
+	</select>
+	<select id="selectByGidAndFtype" resultMap="databaseServiceConfig">
+		select * from `${table_number}_databaseService` where (`gid`=#{gid} and `ftype`=#{ftype})
+	</select>
+	<select id="selectByGid" resultMap="databaseServiceConfig">
+		select * from `${table_number}_databaseService` where (`gid`=#{gid})
+	</select>
+	
+	<select id="selectAllEntity" resultMap="databaseServiceConfig">
+		select * from `${table_number}_databaseService`
+	</select>
+	
+	<insert id="insert" parameterType="java.util.Map">
+		insert into `${table_number}_databaseService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`driverClass`,`minPool`,`initialPool`,`maxPool`,`acquireIncrement`,`maxStatements`,`maxStatementsPerConnection`,`maxIdleTime`,`checkoutTimeout`) values (#{entity.gid},#{entity.ftype},#{entity.key},#{entity.version},#{entity.available},#{entity.initPriority},#{entity.groupIds},#{entity.driverClass},#{entity.minPool},#{entity.initialPool},#{entity.maxPool},#{entity.acquireIncrement},#{entity.maxStatements},#{entity.maxStatementsPerConnection},#{entity.maxIdleTime},#{entity.checkoutTimeout})
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update `${table_number}_databaseService` set `gid`=#{entity.gid},`ftype`=#{entity.ftype},`key`=#{entity.key},`version`=#{entity.version},`available`=#{entity.available},`initPriority`=#{entity.initPriority},`groupIds`=#{entity.groupIds},`driverClass`=#{entity.driverClass},`minPool`=#{entity.minPool},`initialPool`=#{entity.initialPool},`maxPool`=#{entity.maxPool},`acquireIncrement`=#{entity.acquireIncrement},`maxStatements`=#{entity.maxStatements},`maxStatementsPerConnection`=#{entity.maxStatementsPerConnection},`maxIdleTime`=#{entity.maxIdleTime},`checkoutTimeout`=#{entity.checkoutTimeout} where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from `${table_number}_databaseService` where (`gid`=#{entity.gid} and `ftype`=#{entity.ftype} and `key`=#{entity.key})
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.Map">
+		insert into `${table_number}_databaseService` (`gid`,`ftype`,`key`,`version`,`available`,`initPriority`,`groupIds`,`driverClass`,`minPool`,`initialPool`,`maxPool`,`acquireIncrement`,`maxStatements`,`maxStatementsPerConnection`,`maxIdleTime`,`checkoutTimeout`) values 
+		<foreach collection="entity_list" item="item" index="index" separator=",">
+		(#{item.gid},#{item.ftype},#{item.key},#{item.version},#{item.available},#{item.initPriority},#{item.groupIds},#{item.driverClass},#{item.minPool},#{item.initialPool},#{item.maxPool},#{item.acquireIncrement},#{item.maxStatements},#{item.maxStatementsPerConnection},#{item.maxIdleTime},#{item.checkoutTimeout})
+		</foreach> 
+	</insert> 
+	
+	<delete id= "batchRemove" parameterType="java.util.Map">
+		delete from `${table_number}_databaseService` where
+       <foreach collection="entity_list" item= "item" index ="index" separator="or">
+       (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       </foreach>
+    </delete>
+    
+	<select id="selectAllTableName" parameterType="java.util.Map">
+		select TABLE_NAME from information_schema.tables where TABLE_SCHEMA = #{db_number} and TABLE_NAME like 'databaseService\_%'
+	</select>
+	
+	<update id="createTable" parameterType="java.util.Map">
+		CREATE TABLE `${table_number}_databaseService` (
+			`gid` int(11) DEFAULT '0',
+			`ftype` int(11) DEFAULT '0',
+			`key` varchar(30) DEFAULT '',
+			`version` int(11) DEFAULT '0',
+			`available` int(11) DEFAULT '0',
+			`initPriority` int(11) DEFAULT '0',
+			`groupIds` varchar(100) DEFAULT '',
+			`driverClass` varchar(100) DEFAULT '',
+			`minPool` int(11) DEFAULT '0',
+			`initialPool` int(11) DEFAULT '0',
+			`maxPool` int(11) DEFAULT '0',
+			`acquireIncrement` int(11) DEFAULT '0',
+			`maxStatements` int(11) DEFAULT '0',
+			`maxStatementsPerConnection` int(11) DEFAULT '0',
+			`maxIdleTime` int(11) DEFAULT '0',
+			`checkoutTimeout` int(11) DEFAULT '0',
+		PRIMARY KEY (`gid`,`ftype`,`key`),
+		KEY `gid_ftype` (`gid`,`ftype`),
+		KEY `gid` (`gid`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	</update>
+	
+	<update id="batchUpdate" parameterType="java.util.Map">
+		 update `${table_number}_databaseService` set 
+		 `gid`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.gid} 
+       	</foreach>
+        end,
+		 `ftype`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.ftype} 
+       	</foreach>
+        end,
+		 `key`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.key} 
+       	</foreach>
+        end,
+		 `version`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.version} 
+       	</foreach>
+        end,
+		 `available`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.available} 
+       	</foreach>
+        end,
+		 `initPriority`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initPriority} 
+       	</foreach>
+        end,
+		 `groupIds`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.groupIds} 
+       	</foreach>
+        end,
+		 `driverClass`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.driverClass} 
+       	</foreach>
+        end,
+		 `minPool`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.minPool} 
+       	</foreach>
+        end,
+		 `initialPool`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.initialPool} 
+       	</foreach>
+        end,
+		 `maxPool`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.maxPool} 
+       	</foreach>
+        end,
+		 `acquireIncrement`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.acquireIncrement} 
+       	</foreach>
+        end,
+		 `maxStatements`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.maxStatements} 
+       	</foreach>
+        end,
+		 `maxStatementsPerConnection`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.maxStatementsPerConnection} 
+       	</foreach>
+        end,
+		 `maxIdleTime`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.maxIdleTime} 
+       	</foreach>
+        end,
+		 `checkoutTimeout`=case 
+		 <foreach collection="entity_list" item="item" index="index">
+           when (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key}) then #{item.checkoutTimeout} 
+       	</foreach>
+        end
+		where
+       	<foreach collection="entity_list" item="item" index="index" separator="or">
+        (`gid`=#{item.gid} and `ftype`=#{item.ftype} and `key`=#{item.key})
+       	</foreach>
+	</update>
+</mapper>

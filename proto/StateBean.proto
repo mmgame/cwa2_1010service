@@ -1,0 +1,13 @@
+option java_package = "com.cwa.component.bean";
+option java_outer_classname = "DataBean";
+
+//用户信息
+message UserInfoData {
+	required uint64 userId=1;		//用户id
+    required uint64 createTime=2;	//创建时间
+    required uint32 state=3;		//状态
+    required uint32 groupId=4;		//组id
+    required uint32 rid=5;			//区id
+	repeated uint32 serverIds=6;	//服务器id
+}
+
